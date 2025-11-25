@@ -1,0 +1,8 @@
+	setenv HTTP_AUTHORIZATION:$http_authorization;
+#ignored: "-" thing used or unknown variable in regex/rew 
+#ignored: condition 0
+if ($rule_1 = "1"){
+	rewrite ^ /$bref_1 permanent;
+}
+	rewrite ^ /index.php last;
+	rewrite ^/(css|js|images)/(.*)$ /public/$1/$2 last;
