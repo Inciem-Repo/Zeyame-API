@@ -3055,7 +3055,96 @@ protected $baseUrl = 'https://zeyames.s3.ap-south-1.amazonaws.com/category/';
 //     ], 200);
 // }
 
-    public function loginAndFetchCategories(Request $request)
+//     public function loginAndFetchCategories(Request $request)
+// {
+//     // Merge JSON input (for mobile)
+//     $request->merge($request->json()->all());
+
+//     try {
+//         $request->validate([
+//             'username' => 'required',
+//             'password' => 'required',
+//             'offset' => 'nullable|integer|min:0',
+//             'limit' => 'nullable|integer|min:1|max:15',
+//         ]);
+//     } catch (ValidationException $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Validation Error',
+//             'errors' => $e->errors(),
+//             'input_data' => $request->all()
+//         ], 422);
+//     }
+
+//     // 🔹 User verification
+//     $user = User::where('username', $request->username)
+//                 ->where('password', $request->password)
+//                 ->first();
+
+//     if (!$user) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Invalid username or password!',
+//             'input_data' => $request->all()
+//         ], 401);
+//     }
+
+//     if (isset($user->status) && $user->status == 0) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Account suspended, please contact support!',
+//             'input_data' => $request->all()
+//         ], 403);
+//     }
+
+//     // 🔹 Pagination parameters
+//     $offset = $request->query('offset', 0);
+//     $limit = $request->query('limit', 50);
+
+//     // 🔹 Category query
+//     $query = Categorys::orderBy('id', 'DESC');
+
+//     $total = $query->count();
+//     $categories = $query->skip($offset)->take($limit)->get();
+
+//     if ($categories->isEmpty()) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'No categories found!',
+//             'input_data' => $request->all()
+//         ], 404);
+//     }
+
+//     // 🔹 Format file URL
+//     $categories->transform(function ($cat) {
+//         $cat->file = $this->baseUrl . rawurlencode($cat->file);
+//         return $cat;
+//     });
+
+//     // 🔹 Final response
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'Login successful',
+//         'user' => [
+//             'id' => $user->id,
+//             'username' => $user->username,
+//         ],
+//         'input_data' => $request->all(),
+
+//         // Pagination block
+//         'pagination' => [
+//             'offset' => (int) $offset,
+//             'limit' => (int) $limit,
+//             'total' => $total,
+//             'next_offset' => $offset + $limit < $total ? $offset + $limit : null,
+//             'has_more' => $offset + $limit < $total,
+//         ],
+
+//         'categories' => $categories
+//     ], 200);
+// }
+
+   public function loginAndFetchCategories(Request $request)
 {
     // Merge JSON input (for mobile)
     $request->merge($request->json()->all());
@@ -3101,8 +3190,24 @@ protected $baseUrl = 'https://zeyames.s3.ap-south-1.amazonaws.com/category/';
     $offset = $request->query('offset', 0);
     $limit = $request->query('limit', 50);
 
-    // 🔹 Category query
-    $query = Categorys::orderBy('id', 'DESC');
+    // 🔹 Fetch customer & category mapping
+    $customer = Customer::where('id', $user->id)->first();
+  
+
+    if (!$customer || empty($customer->ecategorymultiple)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No category access mapped to this user!',
+            'input_data' => $request->all()
+        ], 404);
+    }
+
+    // Convert comma separated IDs to array
+    $catIDs = array_filter(explode(',', $customer->ecategorymultiple));
+
+    // 🔹 Category query with filter
+    $query = Categorys::whereIn('cat_id', $catIDs)
+                      ->orderBy('id', 'ASC');
 
     $total = $query->count();
     $categories = $query->skip($offset)->take($limit)->get();
