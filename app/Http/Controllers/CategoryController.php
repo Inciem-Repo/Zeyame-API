@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\ExpenseCategory;
 
 class CategoryController extends Controller
 {
@@ -14,9 +15,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $cat=Category::get();
+        $cat = Category::get();
 
-        return response($cat,200);
+        return response($cat, 200);
     }
 
     /**
@@ -83,5 +84,16 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getExpenseCategories()
+    {
+        $categories = ExpenseCategory::select('id', 'name')
+            ->withoutTrashed()
+            ->get();
+        return response()->json([
+            "success" => true,
+            "data" => $categories
+        ]);
     }
 }

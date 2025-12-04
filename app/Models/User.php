@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Salary;
 
 class User extends Authenticatable
 {
@@ -41,4 +42,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function salaries()
+    {
+        return $this->hasMany(Salary::class, 'user_id', 'id');
+    }
+
+    public function currentSalary()
+    {
+        return $this->hasOne(Salary::class, 'user_id', 'id')
+            ->latest('year')
+            ->latest('month');
+    }
 }
