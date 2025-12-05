@@ -22,7 +22,7 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: "./"
-          server-dir: "/www/wwwroot/dev.posterzeyame.com/beta/"
+          server-dir: "/"
 
           exclude: |
             **/.git*
