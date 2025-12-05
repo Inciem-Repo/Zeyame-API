@@ -12,6 +12,7 @@ use App\Http\Controllers\Website\FontController;
 use App\Http\Controllers\Website\ImageController;
 use App\Http\Controllers\Website\BackgroundController;
 use App\Http\Controllers\WebFont\FontController as FFont;
+use App\Http\Controllers\ExpenseController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -154,3 +155,5 @@ Route::get('/background', [BackgroundController::class, 'getCategories']);
 
 Route::get('/expense-categories', [CategoryController::class, 'getExpenseCategories'])->middleware('auth:sanctum')->name('expense-categories.index');
 Route::post('/salary', [SalaryController::class, 'store'])->middleware('auth:sanctum')->name('salary.store');
+Route::post('/expense', [ExpenseController::class, 'store'])->middleware('auth:sanctum')->name('expense.store');
+Route::get('/expense', [ExpenseController::class, 'index'])->middleware('auth:sanctum')->name('expense.index');
