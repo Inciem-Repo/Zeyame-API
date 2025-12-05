@@ -25,6 +25,8 @@ jobs:
           server-dir: "/"
 
           exclude: |
+            __MACOSX/**
+            .git/**
             **/.git*
             **/.env
             **/*.env
@@ -33,5 +35,6 @@ jobs:
             **/tests/**
             **/.github/**
             **/.DS_Store
+
 
           dry-run: false
