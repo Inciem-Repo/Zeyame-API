@@ -1,4 +1,4 @@
-name: Deploy to aaPanel Server
+name: Deploy to aaPanel Server 
 
 on:
   push:
