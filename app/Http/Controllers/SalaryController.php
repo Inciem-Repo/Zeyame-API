@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Salary;
+use Illuminate\Support\Facades\Validator;
 
 class SalaryController extends Controller
 {
@@ -25,6 +26,37 @@ class SalaryController extends Controller
             'personal_care' => 'nullable|numeric|min:0',
             'miscellaneous' => 'nullable|numeric|min:0',
         ]);
+
+        // Checks if optional inputs are greater than salary
+
+        $validator = Validator::make($request->all(), []);
+
+        $validator->after(function ($validator) use ($request) {
+
+            $salary = $request->salary;
+
+            $sum = collect([
+                'savings',
+                'rent_or_emi',
+                'food_and_groceries',
+                'transportation',
+                'utilities',
+                'internet_and_mobile',
+                'insurance',
+                'entertainment',
+                'personal_care',
+                'miscellaneous',
+            ])->sum(fn($field) => (float) $request->input($field, 0));
+
+            if ($sum > $salary) {
+                $validator->errors()->add(
+                    'salary',
+                    'The total of all expense fields cannot exceed salary.'
+                );
+            }
+        });
+
+        $validator->validate(); // throws validation exception if invalid
 
         $user = $request->user();
         $year = now()->year;
