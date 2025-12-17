@@ -88,7 +88,7 @@ class CategoryController extends Controller
 
     public function getExpenseCategories()
     {
-        $categories = ExpenseCategory::select('id', 'name')
+        $categories = ExpenseCategory::select('id', 'name', 'icon_file_path')
             ->withoutTrashed()
             ->get();
         return response()->json([
