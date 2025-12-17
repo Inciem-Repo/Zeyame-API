@@ -58,9 +58,11 @@ class ViewCategoryControllerThree extends Controller
         $user=User::where('username',$request->username)->where('password',$request->password)->first();
         if($user===null) return response(['success'=>false,'message'=>'Invalid username and password!'],200);
         if($user['status']==0)return response(['success'=>false,'message'=>'Account suspended,Please contact to activate account!'],200);
+         $token = $user->createToken('api_token')->plainTextToken;
         $data['user']=$user;
         $data['customer']=Customer::where('email',$user['username'])->first();
         $data['success']=true;
+        $data['token']=$token;
         $data['message']="Login Successfully!..";
         return response($data,200);
     }
