@@ -15,14 +15,13 @@ class ExpenseCategory extends Model
     protected $appends = ['icon_url'];
     protected $hidden = ['icon_file_path'];
 
-    protected function iconUrl(): Attribute
+    protected function getIconUrlAttribute()
     {
-        return Attribute::get(function () {
-            if (!$this->icon_file_path) {
-                return null;
-            }
 
-            return Storage::disk('public')->url($this->icon_file_path);
-        });
+        if (!$this->icon_file_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->icon_file_path);
     }
 }

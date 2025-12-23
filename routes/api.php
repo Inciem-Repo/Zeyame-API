@@ -157,3 +157,4 @@ Route::get('/expense-categories', [CategoryController::class, 'getExpenseCategor
 Route::post('/salary', [SalaryController::class, 'store'])->middleware('auth:sanctum')->name('salary.store');
 Route::post('/expense', [ExpenseController::class, 'store'])->middleware('auth:sanctum')->name('expense.store');
 Route::get('/expense', [ExpenseController::class, 'index'])->middleware('auth:sanctum')->name('expense.index');
+Route::get('/salary', [SalaryController::class, 'index'])->middleware('auth:sanctum')->name('salary.index');

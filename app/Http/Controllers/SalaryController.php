@@ -93,4 +93,23 @@ class SalaryController extends Controller
             'data' => $salary
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $year = now()->year;
+        $month = now()->month;
+
+        // Get existing record for this month
+        $salary = Salary::select('salary', 'user_id', 'year', 'month', 'savings', 'rent_or_emi', 'food_and_groceries', 'transportation', 'utilities', 'internet_and_mobile', 'insurance', 'entertainment', 'personal_care', 'miscellaneous')
+            ->where('user_id', $user->id)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->first();
+
+        return response()->json([
+            'message' => 'Salary fetched successfully.',
+            'data' => $salary
+        ]);
+    }
 }
